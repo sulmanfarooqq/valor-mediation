@@ -1,4 +1,5 @@
 require('dotenv').config();
+const ejs = require('ejs');
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
@@ -23,6 +24,7 @@ const app = express();
 connectDB();
 
 // View engine
+app.engine('ejs', ejs.renderFile);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 

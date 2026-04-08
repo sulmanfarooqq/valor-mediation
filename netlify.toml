@@ -3,6 +3,7 @@
   publish = "public"
 
 [functions]
+  external_node_modules = ["ejs"]
   included_files = ["views/**", "public/**", "models/**", "config/**", "services/**", "middleware/**", "utils/**"]
 
 [[redirects]]
