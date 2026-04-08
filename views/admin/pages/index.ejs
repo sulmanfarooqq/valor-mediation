@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Pages | Valor Mediation, LLC</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../../partials/header') %>
+  
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Pages</h1>
+      <div class="admin-header-actions">
+        <a href="/admin/pages/edit/new">Create New Page</a>
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/logout">Logout</a>
+      </div>
+    </div>
+    
+    <div class="admin-content">
+      <table class="admin-table">
+        <thead>
+          <tr><th>Title</th><th>Slug</th><th>Last Updated</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <% pages.forEach(page => { %>
+            <tr>
+              <td><%= page.title %></td>
+              <td><%= page.slug %></td>
+              <td><%= new Date(page.updatedAt).toLocaleDateString() %></td>
+              <td>
+                <a href="/admin/pages/edit/<%= page._id %>">Edit</a> |
+                <form action="/admin/pages/delete/<%= page._id %>" method="POST" style="display:inline;">
+                  <button type="submit" onclick="return confirm('Delete this page?')">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <script src="/js/main.js"></script>
+</body>
+</html>

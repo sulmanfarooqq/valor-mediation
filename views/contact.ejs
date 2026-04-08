@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Valor Mediation, LLC</title>
+  <meta name="description" content="Get in touch with Valor Mediation, LLC for confidential, professional mediation services across Texas.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('partials/topbar') %>
+  <%- include('partials/header') %>
+  <main>
+<%
+  title = 'Contact Valor Mediation, LLC | Online Mediation Services via Zoom';
+  metaDescription = 'Get in touch with Valor Mediation, LLC for confidential, professional mediation services across Texas. Resolve disputes virtually via Zoom — business, family, workplace, real estate, and personal injury.';
+%>
+
+<section class="contact-hero">
+  <div class="container">
+    <h1>Contact Valor Mediation, LLC</h1>
+    <p>Virtual Mediation Services Across Texas</p>
+  </div>
+</section>
+
+<section class="contact-content">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <p>At Valor Mediation, LLC, we make conflict resolution easy, secure, and accessible — no matter where you are in Texas. All mediation sessions are conducted remotely via Zoom, allowing you and all parties to participate safely and conveniently from your home, office, or anywhere.</p>
+        <h3>Why Contact Valor Mediation?</h3>
+        <ul>
+          <li><strong>Confidential & Secure:</strong> All sessions are held online via Zoom, keeping your matters private.</li>
+          <li><strong>Flexible Scheduling:</strong> We offer morning, afternoon, evening, and weekend sessions to fit your busy life.</li>
+          <li><strong>Expert Mediators:</strong> Our certified mediators bring experience in business, family, workplace, real estate, and insurance disputes.</li>
+          <li><strong>Remote Convenience:</strong> Resolve conflicts without travel or in-person meetings.</li>
+          <li><strong>Free Initial Consultation:</strong> We'll discuss your situation and recommend the best mediation path forward — at no cost.</li>
+        </ul>
+        <div class="contact-details">
+          <h3>Call Us or Email Directly</h3>
+          <p><strong>Phone:</strong> <a href="tel:+18179084070">817.908.4070</a></p>
+          <p><strong>Email:</strong> <a href="mailto:rex@valormediation.com">rex@valormediation.com</a></p>
+        </div>
+      </div>
+      <div class="contact-form">
+        <h3>Send Us a Message</h3>
+        <% if (locals.successMessage) { %>
+          <div class="alert success"><%= successMessage %></div>
+        <% } %>
+        <% if (locals.errorMessage) { %>
+          <div class="alert error"><%= errorMessage %></div>
+        <% } %>
+        <form action="/contact" method="POST">
+          <div class="form-group">
+            <label for="name">Name *</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="company">Company (if applicable)</label>
+            <input type="text" id="company" name="company">
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone">
+          </div>
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

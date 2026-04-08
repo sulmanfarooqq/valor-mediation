@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= blog ? 'Edit Blog' : 'Create Blog' %> | Valor Mediation, LLC</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../../partials/header') %>
+  
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1><%= blog ? 'Edit Blog' : 'Create New Blog' %></h1>
+      <div class="admin-header-actions">
+        <a href="/admin/blogs">Back to Blogs</a>
+        <a href="/admin/logout">Logout</a>
+      </div>
+    </div>
+    
+    <div class="admin-content">
+      <form action="<%= blog ? '/admin/blogs/update/'+blog._id : '/admin/blogs/create' %>" method="POST" enctype="multipart/form-data" class="admin-form">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" name="title" value="<%= blog ? blog.title : '' %>" required>
+        </div>
+        <div class="form-group">
+          <label>Content (HTML allowed)</label>
+          <textarea name="content" rows="10" required><%= blog ? blog.content : '' %></textarea>
+        </div>
+        <div class="form-group">
+          <label>Excerpt (optional)</label>
+          <textarea name="excerpt" rows="3"><%= blog ? blog.excerpt : '' %></textarea>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select name="status">
+            <option value="draft" <%= blog && blog.status === 'draft' ? 'selected' : '' %>>Draft</option>
+            <option value="published" <%= blog && blog.status === 'published' ? 'selected' : '' %>>Published</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Meta Title</label>
+          <input type="text" name="metaTitle" value="<%= blog ? blog.metaTitle : '' %>">
+        </div>
+        <div class="form-group">
+          <label>Meta Description</label>
+          <textarea name="metaDescription" rows="2"><%= blog ? blog.metaDescription : '' %></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Save</button>
+        <a href="/admin/blogs" class="btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+  
+  <script src="/js/main.js"></script>
+</body>
+</html>

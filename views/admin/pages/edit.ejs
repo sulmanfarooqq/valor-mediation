@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= page ? 'Edit Page' : 'Create Page' %> | Valor Mediation, LLC</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../../partials/header') %>
+  
+  <section class="admin-form">
+  <div class="container">
+    <h1>Edit Blog Post</h1>
+    <form action="/admin/blogs/update/<%= blog.id %>" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" name="title" value="<%= blog.title %>" required>
+      </div>
+      <div class="form-group">
+        <label>Content (HTML allowed) *</label>
+        <textarea name="content" rows="12" required><%= blog.content %></textarea>
+      </div>
+      <div class="form-group">
+        <label>Excerpt (short summary)</label>
+        <textarea name="excerpt" rows="3"><%= blog.excerpt || '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="draft" <%= blog.status === 'draft' ? 'selected' : '' %>>Draft</option>
+          <option value="published" <%= blog.status === 'published' ? 'selected' : '' %>>Published</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Current Featured Image</label>
+        <% if (blog.featuredImage) { %>
+          <div class="current-image">
+            <img src="<%= blog.featuredImage %>" alt="Current featured image" style="max-width: 200px;">
+            <p>Leave file input empty to keep this image.</p>
+          </div>
+        <% } else { %>
+          <p>No image set.</p>
+        <% } %>
+        <input type="file" name="featuredImage" accept="image/*">
+        <small>Upload a new image to replace the existing one.</small>
+      </div>
+      <div class="form-group">
+        <label>Meta Title (SEO)</label>
+        <input type="text" name="metaTitle" value="<%= blog.metaTitle || '' %>">
+      </div>
+      <div class="form-group">
+        <label>Meta Description (SEO)</label>
+        <textarea name="metaDescription" rows="2"><%= blog.metaDescription || '' %></textarea>
+      </div>
+      <button type="submit" class="btn-primary">Update Blog</button>
+      <a href="/admin/blogs" class="btn-secondary">Cancel</a>
+    </form>
+  </div>
+</section>
+  
+  <script src="/js/main.js"></script>
+</body>
+</html>

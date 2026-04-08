@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mediation Blog | Insights & Resources</title>
+  <meta name="description" content="Read our blog for insights on mediation, dispute resolution, and conflict management.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../partials/topbar') %>
+  <%- include('../partials/header') %>
+  <main>
+<%
+  title = 'Mediation Blog | Insights & Resources | Valor Mediation, LLC';
+  metaDescription = 'Read our blog for insights on mediation, dispute resolution, and conflict management. Stay updated with the latest in business, family, and workplace mediation.';
+%>
+
+<section class="blog-index">
+  <div class="container">
+    <div class="section-header">
+      <h1>Mediation Insights & Resources</h1>
+      <p>Expert advice and updates from Valor Mediation</p>
+    </div>
+    <div class="blog-grid">
+      <% if (blogs && blogs.length) { %>
+        <% blogs.forEach(blog => { %>
+          <article class="blog-card">
+            <% if (blog.featuredImage) { %>
+              <img src="<%= blog.featuredImage %>" alt="<%= blog.title %>">
+            <% } %>
+            <div class="blog-card-content">
+              <h2><a href="/blog/<%= blog.slug %>"><%= blog.title %></a></h2>
+              <p class="date"><%= new Date(blog.publishedAt || blog.createdAt).toLocaleDateString() %></p>
+              <p><%= blog.excerpt || blog.content.substring(0, 150).replace(/<[^>]*>/g, '') %>...</p>
+              <a href="/blog/<%= blog.slug %>" class="read-more">Read More →</a>
+            </div>
+          </article>
+        <% }); %>
+      <% } else { %>
+        <p class="no-posts">No blog posts yet. Check back soon!</p>
+      <% } %>
+    </div>
+  </div>
+</section>
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

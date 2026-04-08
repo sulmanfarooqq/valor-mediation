@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Blogs | Valor Mediation, LLC</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../../partials/header') %>
+  
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Blog Posts</h1>
+      <div class="admin-header-actions">
+        <a href="/admin/blogs/create">Create New Post</a>
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/logout">Logout</a>
+      </div>
+    </div>
+    
+    <div class="admin-content">
+      <table class="admin-table">
+        <thead>
+          <tr><th>Title</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <% blogs.forEach(blog => { %>
+            <tr>
+              <td><%= blog.title %></td>
+              <td><%= blog.status %></td>
+              <td><%= new Date(blog.createdAt).toLocaleDateString() %></td>
+              <td>
+                <a href="/admin/blogs/edit/<%= blog._id %>">Edit</a> |
+                <form action="/admin/blogs/delete/<%= blog._id %>" method="POST" style="display:inline;">
+                  <button type="submit" onclick="return confirm('Delete this blog?')">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<%
+  var pageTitle = typeof title !== 'undefined' ? title : 'Error';
+  var errorMessage = typeof message !== 'undefined' ? message : 'Something went wrong';
+  var errorStatus = typeof status !== 'undefined' ? status : '500';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/topbar') %>
+  <%- include('partials/header') %>
+  <main>
+    <section class="error-page" style="text-align: center; padding: 4rem;">
+      <h1><%= errorStatus %> - <%= pageTitle %></h1>
+      <p><%= errorMessage %></p>
+      <a href="/" class="btn">Go Home</a>
+    </section>
+  </main>
+  <%- include('partials/footer') %>
+</body>
+</html>

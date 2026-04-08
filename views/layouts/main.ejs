@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Valor Mediation, LLC' %></title>
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Professional mediation services in Texas and nationwide. Resolve disputes via Zoom. Free consultation.' %>">
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVJkEZSMUkrQ6usKu8zIvGon6sntcXgEwkyJqbiWaZ08/iL25AXf7ga4P9KqJMapnxPZoedi+rg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+<body>
+  <%- include('partials/topbar') %>
+  <%- include('partials/header') %>
+  <%- include('partials/chatbotWidget') %>
+  <main>
+    <%- body %>
+  </main>
+  <%- include('partials/footer') %>
+
+  <!-- Trustmary Reviews Widget -->
+  <script src="https://widget.trustmary.com/PtwMVgw_gd"></script>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

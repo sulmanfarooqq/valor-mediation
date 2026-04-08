@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Mediation Services | Valor Mediation, LLC</title>
+  <meta name="description" content="Explore our professional mediation services including business, family, workplace, legal, real estate, and personal injury mediation.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('partials/topbar') %>
+  <%- include('partials/header') %>
+  <main>
+<%
+  title = 'Our Mediation Services | Valor Mediation, LLC';
+  metaDescription = 'Explore our professional mediation services including business, family, workplace, legal, real estate, and personal injury mediation.';
+%>
+<section class="services-overview">
+  <div class="container">
+    <span class="eyebrow">What We Offer</span>
+    <h1>Our Mediation Services</h1>
+    <p class="lead">We offer a comprehensive range of mediation services to help you resolve disputes quickly, confidentially, and cost-effectively. All sessions are conducted online via Zoom.</p>
+    
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-image">
+          <img src="/images/bussines/1.jpg" alt="Business Mediation" loading="lazy">
+        </div>
+        <div class="service-content">
+          <h3><a href="/services/business-mediation">Business & Commercial Mediation</a></h3>
+          <p>Resolve contract disputes, partnership conflicts, vendor issues, and more.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-image">
+          <img src="/images/family/1.jpg" alt="Family Mediation" loading="lazy">
+        </div>
+        <div class="service-content">
+          <h3><a href="/services/family-mediation">Family & Relationship Mediation</a></h3>
+          <p>Navigate divorce, child custody, parenting plans, and family conflicts with care.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-image">
+          <img src="/images/work/1.jpg" alt="Workplace Mediation" loading="lazy">
+        </div>
+        <div class="service-content">
+          <h3><a href="/services/workplace-mediation">Workplace & Employment Mediation</a></h3>
+          <p>Address employer-employee disputes, harassment claims, and team conflicts.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-image">
+          <img src="/images/legal/1.jpg" alt="Legal Mediation" loading="lazy">
+        </div>
+        <div class="service-content">
+          <h3><a href="/services/legal-mediation">Legal System & Court-Connected Mediation</a></h3>
+          <p>Efficiently resolve court-ordered or pre-litigation disputes.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-image">
+          <img src="/images/estate/1.jpg" alt="Real Estate Mediation" loading="lazy">
+        </div>
+        <div class="service-content">
+          <h3><a href="/services/real-estate-mediation">Real Estate & Property Mediation</a></h3>
+          <p>Resolve landlord-tenant, HOA, boundary, and property disputes.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-image">
+          <img src="/images/personal/1.jpg" alt="Personal Injury Mediation" loading="lazy">
+        </div>
+        <div class="service-content">
+          <h3><a href="/services/personal-injury-mediation">Personal Injury & Insurance Mediation</a></h3>
+          <p>Settle auto accident, workers' comp, and insurance claims efficiently.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

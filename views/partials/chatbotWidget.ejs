@@ -1,0 +1,475 @@
+<!-- Valor Mediation Chatbot Widget -->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Toggle Button */
+  #chat-toggle {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0a1628, #1a2d5a);
+    border: 2px solid #c9a84c;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(10,22,40,0.45);
+    z-index: 9999;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  #chat-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 28px rgba(201,168,76,0.35);
+  }
+  #chat-toggle svg { width: 28px; height: 28px; }
+  #chat-toggle svg path { fill: #c9a84c; }
+
+  /* Notification dot */
+  #notif-dot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 12px; height: 12px;
+    background: #e74c3c;
+    border-radius: 50%;
+    border: 2px solid #fff;
+  }
+
+  /* Chat Window */
+  #chat-window {
+    position: fixed;
+    bottom: 104px;
+    right: 28px;
+    width: 370px;
+    max-height: 560px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(10,22,40,0.38);
+    display: none;
+    flex-direction: column;
+    z-index: 9998;
+    border: 1.5px solid #c9a84c;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Header */
+  .chat-header {
+    background: linear-gradient(135deg, #0a1628 0%, #1a2d5a 100%);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1.5px solid #c9a84c;
+  }
+  .header-avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: #c9a84c;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; color: #0a1628;
+    flex-shrink: 0;
+  }
+  .header-info h3 {
+    color: #c9a84c;
+    font-size: 15px; font-weight: 700; line-height: 1.2;
+  }
+  .header-info p {
+    color: #8fa8d0;
+    font-size: 12px; margin-top: 2px;
+  }
+  .online-dot {
+    width: 8px; height: 8px;
+    background: #2ecc71;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+  }
+  .close-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #8fa8d0;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .close-btn:hover { color: #c9a84c; }
+
+  /* Messages area */
+  #chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 14px;
+    background: #f7f9fc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 360px;
+    min-height: 220px;
+  }
+  #chat-messages::-webkit-scrollbar { width: 4px; }
+  #chat-messages::-webkit-scrollbar-thumb { background: #c9a84c55; border-radius: 4px; }
+
+  /* Bubbles */
+  .msg {
+    display: flex;
+    flex-direction: column;
+    max-width: 88%;
+  }
+  .msg.bot { align-self: flex-start; }
+  .msg.user { align-self: flex-end; }
+
+  .bubble {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .msg.bot .bubble {
+    background: linear-gradient(135deg, #0a1628, #1a2d5a);
+    color: #e8eef8;
+    border-bottom-left-radius: 4px;
+    border: 1px solid #c9a84c44;
+  }
+  .msg.user .bubble {
+    background: #c9a84c;
+    color: #0a1628;
+    font-weight: 600;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-time {
+    font-size: 10.5px;
+    color: #aab;
+    margin-top: 3px;
+    padding: 0 4px;
+  }
+  .msg.user .msg-time { text-align: right; }
+
+  /* Quick replies */
+  #quick-replies {
+    padding: 8px 14px 4px;
+    background: #f7f9fc;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .qr-btn {
+    background: #fff;
+    border: 1.5px solid #c9a84c;
+    color: #0a1628;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    white-space: nowrap;
+  }
+  .qr-btn:hover {
+    background: #c9a84c;
+    color: #0a1628;
+  }
+
+  /* Input area */
+  .chat-footer {
+    background: #fff;
+    border-top: 1.5px solid #e0e7ef;
+    padding: 10px 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  #chat-input {
+    flex: 1;
+    border: 1.5px solid #d0dae8;
+    border-radius: 22px;
+    padding: 9px 15px;
+    font-size: 13.5px;
+    outline: none;
+    color: #0a1628;
+    background: #f7f9fc;
+    transition: border 0.2s;
+  }
+  #chat-input:focus { border-color: #c9a84c; background: #fff; }
+  #send-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0a1628, #1a2d5a);
+    border: 2px solid #c9a84c;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s;
+    flex-shrink: 0;
+  }
+  #send-btn:hover { transform: scale(1.08); }
+  #send-btn svg { width: 17px; height: 17px; }
+  #send-btn svg path { fill: #c9a84c; }
+
+  /* Typing indicator */
+  .typing-bubble {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #0a1628, #1a2d5a);
+    border-radius: 14px;
+    border-bottom-left-radius: 4px;
+    border: 1px solid #c9a84c44;
+    width: fit-content;
+  }
+  .typing-dot {
+    width: 7px; height: 7px;
+    background: #c9a84c;
+    border-radius: 50%;
+    animation: bounce 1.1s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.18s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.7; }
+    40% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Powered by */
+  .powered {
+    text-align: center;
+    font-size: 10.5px;
+    color: #aab;
+    padding: 6px 0 8px;
+    background: #fff;
+  }
+  .powered span { color: #c9a84c; font-weight: 600; }
+
+  @media (max-width: 420px) {
+    #chat-window { width: calc(100vw - 16px); right: 8px; bottom: 90px; }
+    #chat-toggle { right: 16px; bottom: 16px; }
+  }
+</style>
+
+<!-- Toggle Button -->
+<button id="chat-toggle" onclick="toggleChat()" title="Chat with us">
+  <div id="notif-dot"></div>
+  <div style="font-size: 20px; color: #c9a84c;">💬</div>
+</button>
+
+<!-- Chat Window -->
+<div id="chat-window">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-avatar">V</div>
+    <div class="header-info">
+      <h3>Valor Mediation</h3>
+      <p><span class="online-dot"></span>We're online — Ask us anything</p>
+    </div>
+    <button class="close-btn" onclick="toggleChat()">&#x2715;</button>
+  </div>
+
+  <!-- Messages -->
+  <div id="chat-messages"></div>
+
+  <!-- Quick Replies -->
+  <div id="quick-replies">
+    <button class="qr-btn" onclick="sendQuick('What services do you offer?')">Services</button>
+    <button class="qr-btn" onclick="sendQuick('How do I schedule a consultation?')">Free Consultation</button>
+    <button class="qr-btn" onclick="sendQuick('What is mediation?')">What is Mediation?</button>
+    <button class="qr-btn" onclick="sendQuick('Service areas')">Service Areas</button>
+    <button class="qr-btn" onclick="sendQuick('Contact information')">Contact Us</button>
+  </div>
+
+  <!-- Input -->
+  <div class="chat-footer">
+    <input id="chat-input" type="text" placeholder="Type your message..." onkeydown="handleKey(event)" />
+    <button id="send-btn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 21l21-9L2 3v7l15 2-15 2z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="powered">Powered by <span>Valor Mediation, LLC</span></div>
+</div>
+
+<script>
+const KB = [
+  {
+    keys: ['hello','hi','hey','good morning','good evening','salam','assalam','howdy'],
+    answer: "Hello! Welcome to Valor Mediation, LLC. I'm here to help you with all your mediation needs. How can I assist you today?"
+  },
+  {
+    keys: ['service','offer','provide','what do you do','help with','specialize'],
+    answer: "We offer 6 professional mediation services:\n\n• Business & Commercial Mediation\n• Family & Relationship Mediation\n• Workplace & Employment Mediation\n• Legal System & Court-Connected Mediation\n• Real Estate & Property Mediation\n• Personal Injury & Insurance Mediation\n\nAll sessions are conducted securely via Zoom."
+  },
+  {
+    keys: ['business','commercial','contract','partnership','vendor','franchise','shareholder','corporation'],
+    answer: "Our Business & Commercial Mediation helps resolve:\n\n• Contract disputes and breaches\n• Partnership/shareholder disagreements\n• Vendor and supplier conflicts\n• Franchise disputes\n• Business dissolution\n• Construction and project disputes\n• Family-owned business conflicts\n\nFast, confidential, and cost-effective — without going to court."
+  },
+  {
+    keys: ['family','divorce','child','custody','parenting','separation','marital','spouse','spousal','estate','inheritance','sibling'],
+    answer: "Our Family & Relationship Mediation covers:\n\n• Divorce and separation\n• Child custody and visitation\n• Parenting plans and co-parenting\n• Marital disputes\n• Elder care and family decisions\n• Estate and inheritance disagreements\n\nCompassionate, confidential, and child-focused solutions."
+  },
+  {
+    keys: ['workplace','employment','employee','employer','harassment','discrimination','wrongful','termination','hr','team','department','wage'],
+    answer: "Our Workplace & Employment Mediation handles:\n\n• Employer–employee disputes\n• Harassment and discrimination claims\n• Wrongful termination conflicts\n• Workplace communication breakdowns\n• Team and departmental conflicts\n• Contract and employment issues\n\nWe protect both employee and company privacy."
+  },
+  {
+    keys: ['court','legal','lawsuit','judge','litigation','pre-litigation','small claims','civil','attorney','law'],
+    answer: "Our Court-Connected Mediation assists with:\n\n• Court-ordered mediation cases\n• Pre-litigation dispute resolution\n• Small claims mediation\n• Civil and business disputes\n• Contract and financial disagreements\n\nWe help you avoid trial — faster and more affordable."
+  },
+  {
+    keys: ['real estate','property','landlord','tenant','hoa','boundary','construction','title','realtor','lease','land'],
+    answer: "Our Real Estate & Property Mediation covers:\n\n• Landlord–tenant disputes\n• HOA and community conflicts\n• Property line and boundary disputes\n• Real estate transaction disagreements\n• Construction defects or delays\n• Title and ownership issues\n• Realtor-client disputes\n\nQuick, private, and legally binding resolutions."
+  },
+  {
+    keys: ['personal injury','insurance','accident','auto','car','slip','fall','workers','compensation','liability','medical','malpractice'],
+    answer: "Our Personal Injury & Insurance Mediation handles:\n\n• Auto accident claims\n• Slip and fall / premises liability\n• Workers' compensation disputes\n• Insurance policy disagreements\n• Liability and negligence claims\n• Medical-related disputes\n\nFair, fast settlements without court stress."
+  },
+  {
+    keys: ['what is mediation','how does mediation work','explain mediation','define mediation','mediation mean'],
+    answer: "Mediation is a confidential, voluntary process where a neutral third-party mediator helps disputing parties reach a mutually acceptable agreement — without going to court.\n\nTop Benefits:\n✓ Cost-effective (save on legal fees)\n✓ Faster resolution (days/weeks, not months)\n✓ Private and confidential\n✓ You control the outcome — not a judge\n✓ Less stressful and adversarial\n✓ Agreements are legally binding (MSA)"
+  },
+  {
+    keys: ['msa','mediation settlement','agreement','binding','enforceable','legal agreement'],
+    answer: "A Mediation Settlement Agreement (MSA) is a legally binding contract resulting from successful mediation.\n\n• Enforceable in court once signed\n• Clearly defines terms and obligations\n• Courts uphold valid MSAs\n• Can be court-approved for extra enforcement\n• Faster than traditional litigation\n\nYou get legal protection AND control over the outcome."
+  },
+  {
+    keys: ['zoom','online','virtual','remote','video','session','meeting'],
+    answer: "All Valor Mediation sessions are conducted 100% online via secure Zoom.\n\nBenefits:\n• Participate from anywhere in Texas or the U.S.\n• No travel required\n• Flexible scheduling (evenings & weekends available)\n• Fully secure and confidential\n• Faster scheduling and resolution\n\nJust a stable internet connection is all you need!"
+  },
+  {
+    keys: ['schedule','appointment','book','consultation','free consultation','get started','start','begin'],
+    answer: "Getting started is easy!\n\n📅 Schedule your FREE consultation:\n📞 Call: 817-908-4070\n✉️ Email: rex@valormediation.com\n\nWe offer flexible morning, afternoon, evening, and weekend appointments to fit your schedule.\n\nAll consultations are confidential and conducted via Zoom."
+  },
+  {
+    keys: ['contact','phone','email','call','reach','number','address'],
+    answer: "Contact Valor Mediation, LLC:\n\n📞 Phone: 817-908-4070\n✉️ Email: rex@valormediation.com\n\nAll sessions are 100% online via Zoom — no travel needed.\n\nFree initial consultation available. We serve clients across Texas and nationwide."
+  },
+  {
+    keys: ['cost','price','fee','affordable','expensive','how much','rate','charge'],
+    answer: "Mediation is significantly more affordable than litigation!\n\n• No expensive court costs\n• No lengthy attorney fees\n• Resolve disputes in days or weeks — not years\n• Free initial consultation available\n\nFor specific pricing information, please contact us:\n📞 817-908-4070\n✉️ rex@valormediation.com"
+  },
+  {
+    keys: ['area','location','city','serve','texas','dallas','fort worth','houston','austin','san antonio','plano','arlington','irving','garland','frisco','denton','grand prairie','mckinney','nationwide','usa','united states'],
+    answer: "We serve clients across Texas and nationwide!\n\nMajor Texas Cities:\nDallas • Fort Worth • Houston • Austin • San Antonio • Plano • Arlington • Irving • Garland • Frisco • McKinney • Denton • Grand Prairie • Waco • Lubbock\n\nBecause all sessions are online via Zoom, we serve clients anywhere in the United States — no travel required."
+  },
+  {
+    keys: ['rex','steele','mediator','founder','about','who are you','who is','certified','veteran','navy'],
+    answer: "Meet Rex Steele — Lead Mediator at Valor Mediation, LLC\n\n• Certified Professional Mediator\n• U.S. Navy Veteran\n• Business Strategist & Negotiation Expert\n• 13+ years directing a Small Business Development Center (SBDC)\n• Background in commercial real estate, business brokerage, and engineering management\n\nRex brings strength, integrity, and calm authority to every session."
+  },
+  {
+    keys: ['why choose','why valor','benefit','advantage','reason','better than','vs court','versus','instead of court'],
+    answer: "Why Choose Valor Mediation?\n\n✓ Focused exclusively on mediation (not a law firm)\n✓ Completely neutral and unbiased\n✓ Personalized approach for every dispute\n✓ Certified, experienced mediator\n✓ Flexible evening & weekend scheduling\n✓ 100% secure online via Zoom\n✓ Legally binding agreements (MSA)\n✓ Free initial consultation\n✓ Serving Texas & all of USA"
+  },
+  {
+    keys: ['confidential','privacy','private','secret','secure','data'],
+    answer: "Confidentiality is a cornerstone of our practice.\n\n• All sessions are completely private\n• No public records (unlike court proceedings)\n• Secure Zoom platform for all meetings\n• Strict ethical standards maintained\n• Your personal and business information stays protected at every stage\n\nYou can speak freely without fear of disclosure."
+  },
+  {
+    keys: ['how long','duration','time','quick','fast','how fast','weeks','months','days'],
+    answer: "Mediation is significantly faster than litigation!\n\n• Many disputes resolved in 1–2 sessions\n• Typical resolution: days to weeks\n• Court cases can take months or years\n• Flexible scheduling speeds up the process\n\nThe exact duration depends on the complexity of your dispute. Contact us for an estimate:\n📞 817-908-4070"
+  },
+  {
+    keys: ['thank','thanks','appreciate','helpful','great','awesome','good'],
+    answer: "You're very welcome! It's our pleasure to assist you.\n\nIf you have more questions or are ready to move forward, we offer a free consultation:\n\n📞 Call: 817-908-4070\n✉️ Email: rex@valormediation.com\n\nValor Mediation — Resolving disputes with clarity, confidence, and compassion."
+  },
+  {
+    keys: ['bye','goodbye','see you','later','take care'],
+    answer: "Thank you for contacting Valor Mediation, LLC! \n\nWhenever you're ready to resolve your dispute, we're here to help.\n\n📞 817-908-4070\n✉️ rex@valormediation.com\n\nHave a wonderful day!"
+  }
+];
+
+const DEFAULT = "Thank you for your question! I'm not sure I have the exact answer, but our team can help.\n\n📞 Call: 817-908-4070\n✉️ Email: rex@valormediation.com\n\nOr try asking about: Services, Family Mediation, Business Disputes, Schedule a Consultation, Service Areas, or Contact Info.";
+
+function getTime() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function getResponse(input) {
+  const text = input.toLowerCase();
+  for (const item of KB) {
+    if (item.keys.some(k => text.includes(k))) return item.answer;
+  }
+  return DEFAULT;
+}
+
+function appendMsg(text, type) {
+  const area = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + type;
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.innerText = text;
+  const time = document.createElement('div');
+  time.className = 'msg-time';
+  time.innerText = getTime();
+  div.appendChild(bubble);
+  div.appendChild(time);
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function showTyping() {
+  const area = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.id = 'typing-indicator';
+  div.innerHTML = '<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  appendMsg(text, 'user');
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const response = getResponse(text);
+    appendMsg(response, 'bot');
+  }, 850);
+}
+
+function sendQuick(text) {
+  document.getElementById('chat-input').value = '';
+  appendMsg(text, 'user');
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendMsg(getResponse(text), 'bot');
+  }, 850);
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter') sendMessage();
+}
+
+let chatOpen = false;
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const win = document.getElementById('chat-window');
+  const dot = document.getElementById('notif-dot');
+  win.style.display = chatOpen ? 'flex' : 'none';
+  if (dot) dot.style.display = 'none';
+  if (chatOpen && document.getElementById('chat-messages').children.length === 0) {
+    setTimeout(() => {
+      appendMsg("Hello! Welcome to Valor Mediation, LLC. I'm here to help you resolve disputes quickly, privately, and fairly — without the stress of court.\n\nHow can I assist you today?", 'bot');
+    }, 300);
+  }
+}
+</script>

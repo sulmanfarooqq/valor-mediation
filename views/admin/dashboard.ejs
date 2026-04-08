@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Valor Mediation, LLC</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Dashboard</h1>
+      <div class="admin-header-actions">
+        <a href="/admin/blogs">Blogs</a>
+        <a href="/admin/pages">Pages</a>
+        <a href="/admin/contacts">Contacts</a>
+        <a href="/admin/settings">Settings</a>
+        <a href="/admin/logout">Logout</a>
+      </div>
+    </div>
+    
+    <div class="admin-content">
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <h3>Blog Posts</h3>
+          <p><%= blogCount || 0 %></p>
+        </div>
+        <div class="stat-card">
+          <h3>Pages</h3>
+          <p><%= pageCount || 0 %></p>
+        </div>
+        <div class="stat-card">
+          <h3>Contacts</h3>
+          <p><%= contactCount || 0 %></p>
+        </div>
+      </div>
+      
+      <div class="quick-actions">
+        <a href="/admin/blogs" class="btn">Manage Blogs</a>
+        <a href="/admin/pages" class="btn">Manage Pages</a>
+        <a href="/admin/contacts" class="btn">View Contacts</a>
+        <a href="/admin/settings" class="btn">Settings</a>
+      </div>
+    </div>
+  </div>
+  
+  <script src="/js/main.js"></script>
+</body>
+</html>
