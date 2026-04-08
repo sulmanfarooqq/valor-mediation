@@ -1,4 +1,4 @@
-const MongoStore = require('connect-mongo');
+const { MongoStore } = require('connect-mongo');
 const config = require('./env');
 
 const sessionConfig = {
