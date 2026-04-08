@@ -2,9 +2,9 @@ const { Blog, Page, Contact } = require('../../models');
 
 exports.getDashboard = async (req, res) => {
   try {
-    const blogCount = await Blog.count();
-    const pageCount = await Page.count();
-    const contactCount = await Contact.count();
+    const blogCount = await Blog.countDocuments();
+    const pageCount = await Page.countDocuments();
+    const contactCount = await Contact.countDocuments();
     res.render('admin/dashboard', {
       title: 'Admin Dashboard',
       blogCount,
@@ -14,6 +14,6 @@ exports.getDashboard = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).render('error', { message: 'Server Error' });
+    res.status(500).render('error', { title: 'Error', message: 'Server Error' });
   }
 };

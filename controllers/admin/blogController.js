@@ -2,7 +2,7 @@ const { Blog } = require('../../models');
 
 exports.getBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.findAll({ order: [['id', 'DESC']] });
+    const blogs = await Blog.find().sort({ createdAt: -1 });
     res.render('admin/blogs/index', { title: 'Manage Blogs', blogs, user: req.user });
   } catch (error) {
     console.error(error);
@@ -24,7 +24,7 @@ exports.postCreateBlog = async (req, res) => {
       status,
       metaTitle,
       metaDescription,
-      userId: req.user.id,
+      author: req.user._id,
     });
     req.flash('success', 'Blog created successfully');
     res.redirect('/admin/blogs');
@@ -37,7 +37,7 @@ exports.postCreateBlog = async (req, res) => {
 
 exports.getEditBlog = async (req, res) => {
   try {
-    const blog = await Blog.findByPk(req.params.id);
+    const blog = await Blog.findById(req.params.id);
     if (!blog) {
       req.flash('error', 'Blog not found');
       return res.redirect('/admin/blogs');
@@ -53,10 +53,14 @@ exports.getEditBlog = async (req, res) => {
 exports.postUpdateBlog = async (req, res) => {
   try {
     const { title, content, excerpt, status, metaTitle, metaDescription } = req.body;
-    await Blog.update(
-      { title, content, excerpt, status, metaTitle, metaDescription },
-      { where: { id: req.params.id } }
-    );
+    await Blog.findByIdAndUpdate(req.params.id, {
+      title,
+      content,
+      excerpt,
+      status,
+      metaTitle,
+      metaDescription,
+    });
     req.flash('success', 'Blog updated successfully');
     res.redirect('/admin/blogs');
   } catch (error) {
@@ -68,7 +72,7 @@ exports.postUpdateBlog = async (req, res) => {
 
 exports.postDeleteBlog = async (req, res) => {
   try {
-    await Blog.destroy({ where: { id: req.params.id } });
+    await Blog.findByIdAndDelete(req.params.id);
     req.flash('success', 'Blog deleted successfully');
     res.redirect('/admin/blogs');
   } catch (error) {

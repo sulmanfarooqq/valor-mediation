@@ -2,17 +2,17 @@ const { Contact } = require('../../models');
 
 exports.getContacts = async (req, res) => {
   try {
-    const contacts = await Contact.findAll({ order: [['id', 'DESC']] });
+    const contacts = await Contact.find().sort({ createdAt: -1 });
     res.render('admin/contacts', { title: 'Contact Messages', contacts, user: req.user });
   } catch (error) {
     console.error(error);
-    res.status(500).render('error', { message: 'Server Error' });
+    res.status(500).render('error', { title: 'Error', message: 'Server Error' });
   }
 };
 
 exports.getContactDetail = async (req, res) => {
   try {
-    const contact = await Contact.findByPk(req.params.id);
+    const contact = await Contact.findById(req.params.id);
     if (!contact) {
       req.flash('error', 'Contact not found');
       return res.redirect('/admin/contacts');
@@ -27,7 +27,7 @@ exports.getContactDetail = async (req, res) => {
 
 exports.postDeleteContact = async (req, res) => {
   try {
-    await Contact.destroy({ where: { id: req.params.id } });
+    await Contact.findByIdAndDelete(req.params.id);
     req.flash('success', 'Message deleted successfully');
     res.redirect('/admin/contacts');
   } catch (error) {

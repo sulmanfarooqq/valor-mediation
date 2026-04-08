@@ -6,8 +6,8 @@ exports.getContact = (req, res) => {
     title: 'Contact Valor Mediation, LLC | Online Mediation Services via Zoom',
     metaDescription: 'Get in touch with Valor Mediation, LLC for confidential, professional mediation services across Texas.',
     user: req.user,
-    successMessage: req.flash('success'),
-    errorMessage: req.flash('error'),
+    success: req.flash('success'),
+    error: req.flash('error'),
   });
 };
 
@@ -23,7 +23,14 @@ exports.postConsultation = async (req, res) => {
       mediumType: 'consultation',
       status: 'new',
     });
-    await emailService.sendContactNotification({ name, email, phone, message: `Consultation Request: ${message}` }, 'consultation');
+    
+    await emailService.sendContactNotification({ 
+      name, 
+      email, 
+      phone, 
+      message: `Consultation Request: ${message}` 
+    }, 'consultation');
+    
     req.flash('success', 'Your consultation request has been sent. We will contact you shortly.');
     res.redirect('/contact');
   } catch (error) {
@@ -44,7 +51,13 @@ exports.postQuestion = async (req, res) => {
       mediumType: 'question',
       status: 'new',
     });
-    await emailService.sendContactNotification({ name, email, message: question }, 'question');
+    
+    await emailService.sendContactNotification({ 
+      name, 
+      email, 
+      message: question 
+    }, 'question');
+    
     req.flash('success', 'Your question has been sent. We will get back to you soon.');
     res.redirect('/contact');
   } catch (error) {

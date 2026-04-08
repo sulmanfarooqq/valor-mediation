@@ -1,67 +1,57 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+const mongoose = require('mongoose');
 const slugify = require('slugify');
 
-const Blog = sequelize.define('Blog', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
+const blogSchema = new mongoose.Schema({
   title: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: String,
+    required: [true, 'Please provide a title'],
+    trim: true,
   },
   slug: {
-    type: DataTypes.STRING,
+    type: String,
     unique: true,
   },
   content: {
-    type: DataTypes.TEXT,
-    allowNull: false,
+    type: String,
+    required: [true, 'Please provide content'],
   },
   excerpt: {
-    type: DataTypes.TEXT,
+    type: String,
   },
   featuredImage: {
-    type: DataTypes.STRING,
+    type: String,
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: 'Users',
-      key: 'id',
-    },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
   status: {
-    type: DataTypes.ENUM('draft', 'published'),
-    defaultValue: 'draft',
+    type: String,
+    enum: ['draft', 'published'],
+    default: 'draft',
   },
   publishedAt: {
-    type: DataTypes.DATE,
+    type: Date,
   },
-  metaTitle: DataTypes.STRING,
-  metaDescription: DataTypes.TEXT,
+  metaTitle: String,
+  metaDescription: String,
 }, {
-  timestamps: false,
-  hooks: {
-    beforeCreate: (blog) => {
-      if (blog.title) {
-        blog.slug = slugify(blog.title, { lower: true, strict: true });
-      }
-      if (blog.status === 'published' && !blog.publishedAt) {
-        blog.publishedAt = new Date();
-      }
-    },
-    beforeUpdate: (blog) => {
-      if (blog.changed('title')) {
-        blog.slug = slugify(blog.title, { lower: true, strict: true });
-      }
-      if (blog.status === 'published' && blog.changed('status') && !blog.publishedAt) {
-        blog.publishedAt = new Date();
-      }
-    },
-  },
+  timestamps: true,
 });
 
-module.exports = Blog;
+// Auto-generate slug before saving
+blogSchema.pre('save', function(next) {
+  if (this.isModified('title')) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+
+  if (this.isModified('status')) {
+    if (this.status === 'published' && !this.publishedAt) {
+      this.publishedAt = Date.now();
+    }
+  }
+  next();
+});
+
+module.exports = mongoose.model('Blog', blogSchema);

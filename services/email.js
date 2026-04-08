@@ -1,43 +1,45 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const config = require('../config/env');
 
-let transporter;
-if (config.email.user && config.email.pass) {
-  transporter = nodemailer.createTransport({
-    host: config.email.host,
-    port: config.email.port,
-    secure: config.email.port === 465,
-    auth: {
-      user: config.email.user,
-      pass: config.email.pass,
-    },
-  });
-} else {
-  console.warn('Email credentials not set. Email sending disabled.');
-  transporter = null;
-}
+const resend = new Resend(config.resend.apiKey);
 
+/**
+ * Send contact notification email using Resend
+ * @param {Object} contact - The contact object
+ * @param {string} type - Type of submission (general, consultation, question)
+ */
 const sendContactNotification = async (contact, type = 'general') => {
-  if (!transporter) {
-    console.log(`[${type}] New contact:`, contact);
+  if (!config.resend.apiKey) {
+    console.warn('⚠️  Resend API Key not set. Email sending skipped.');
+    console.log(`[${type}] New contact data:`, contact);
     return;
   }
 
   const subject = type === 'consultation' ? 'New Consultation Request' : 
                   type === 'question' ? 'New Question from Website' : 'New Contact Form Submission';
-  const text = `Type: ${type}\nName: ${contact.name}\nEmail: ${contact.email}\nPhone: ${contact.phone || 'N/A'}\nMessage: ${contact.message}`;
-  const mailOptions = {
-    from: config.email.from,
-    to: config.email.from,
-    subject,
-    text,
-    replyTo: contact.email,
-  };
+  
+  const html = `
+    <h2>${subject}</h2>
+    <p><strong>Type:</strong> ${type}</p>
+    <p><strong>Name:</strong> ${contact.name}</p>
+    <p><strong>Email:</strong> ${contact.email}</p>
+    <p><strong>Phone:</strong> ${contact.phone || 'N/A'}</p>
+    <p><strong>Message:</strong></p>
+    <p>${contact.message.replace(/\n/g, '<br>')}</p>
+  `;
 
   try {
-    await transporter.sendMail(mailOptions);
+    const data = await resend.emails.send({
+      from: config.email.from,
+      to: config.adminEmail || config.email.from,
+      subject: subject,
+      html: html,
+      reply_to: contact.email,
+    });
+    
+    console.log('✅ Email sent successfully via Resend:', data.id);
   } catch (error) {
-    console.error('Email sending failed:', error);
+    console.error('❌ Resend email sending failed:', error.message);
   }
 };
 

@@ -1,13 +1,18 @@
-const { sessionStore } = require('./database');
+const MongoStore = require('connect-mongo');
+const config = require('./env');
 
 const sessionConfig = {
-  secret: process.env.SESSION_SECRET,
+  secret: config.sessionSecret,
   resave: false,
   saveUninitialized: false,
-  store: sessionStore,
+  store: MongoStore.create({
+    mongoUrl: config.mongodb.uri,
+    collectionName: 'sessions',
+    ttl: 14 * 24 * 60 * 60, // 14 days
+  }),
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: config.nodeEnv === 'production',
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
   },
 };

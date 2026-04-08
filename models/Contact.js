@@ -1,43 +1,37 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+const mongoose = require('mongoose');
 
-const Contact = sequelize.define('Contact', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
+const contactSchema = new mongoose.Schema({
   name: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: String,
+    required: [true, 'Please provide a name'],
+    trim: true,
   },
   email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isEmail: true,
-    },
+    type: String,
+    required: [true, 'Please provide an email'],
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email'],
   },
-  phone: DataTypes.STRING,
+  phone: String,
   message: {
-    type: DataTypes.TEXT,
-    allowNull: false,
+    type: String,
+    required: [true, 'Please provide a message'],
   },
-  subject: DataTypes.STRING,
-  mediumType: DataTypes.STRING,
+  subject: String,
+  mediumType: {
+    type: String,
+    default: 'general',
+  },
   status: {
-    type: DataTypes.ENUM('new', 'read', 'replied'),
-    defaultValue: 'new',
+    type: String,
+    enum: ['new', 'read', 'replied'],
+    default: 'new',
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: 'Users',
-      key: 'id',
-    },
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   },
 }, {
-  timestamps: false,
+  timestamps: true,
 });
 
-module.exports = Contact;
+module.exports = mongoose.model('Contact', contactSchema);

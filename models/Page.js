@@ -1,53 +1,42 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+const mongoose = require('mongoose');
 const slugify = require('slugify');
 
-const Page = sequelize.define('Page', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
+const pageSchema = new mongoose.Schema({
   title: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: String,
+    required: [true, 'Please provide a title'],
+    trim: true,
   },
   slug: {
-    type: DataTypes.STRING,
+    type: String,
     unique: true,
   },
   content: {
-    type: DataTypes.TEXT,
-    allowNull: false,
+    type: String,
+    required: [true, 'Please provide content'],
   },
-  metaTitle: DataTypes.STRING,
-  metaDescription: DataTypes.TEXT,
-  metaKeywords: DataTypes.STRING,
+  metaTitle: String,
+  metaDescription: String,
+  metaKeywords: String,
   status: {
-    type: DataTypes.ENUM('draft', 'published'),
-    defaultValue: 'draft',
+    type: String,
+    enum: ['draft', 'published'],
+    default: 'draft',
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: 'Users',
-      key: 'id',
-    },
+  lastUpdatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   },
 }, {
-  timestamps: false,
-  hooks: {
-    beforeCreate: (page) => {
-      if (page.title) {
-        page.slug = slugify(page.title, { lower: true, strict: true });
-      }
-    },
-    beforeUpdate: (page) => {
-      if (page.changed('title')) {
-        page.slug = slugify(page.title, { lower: true, strict: true });
-      }
-    },
-  },
+  timestamps: true,
 });
 
-module.exports = Page;
+// Auto-generate slug before saving
+pageSchema.pre('save', function(next) {
+  if (this.isModified('title')) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+  next();
+});
+
+module.exports = mongoose.model('Page', pageSchema);

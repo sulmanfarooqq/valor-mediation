@@ -1,21 +1,17 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+const mongoose = require('mongoose');
 
-const Setting = sequelize.define('Setting', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
+const settingSchema = new mongoose.Schema({
   key: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: String,
+    required: [true, 'Please provide a key'],
     unique: true,
   },
   value: {
-    type: DataTypes.JSON,
-    allowNull: false,
+    type: mongoose.Schema.Types.Mixed,
+    required: [true, 'Please provide a value'],
   },
+}, {
+  timestamps: true,
 });
 
-module.exports = Setting;
+module.exports = mongoose.model('Setting', settingSchema);

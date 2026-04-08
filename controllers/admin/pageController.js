@@ -2,17 +2,17 @@ const { Page } = require('../../models');
 
 exports.getPages = async (req, res) => {
   try {
-    const pages = await Page.findAll({ order: [['id', 'DESC']] });
+    const pages = await Page.find().sort({ createdAt: -1 });
     res.render('admin/pages/index', { title: 'Manage Pages', pages, user: req.user });
   } catch (error) {
     console.error(error);
-    res.status(500).render('error', { message: 'Server Error' });
+    res.status(500).render('error', { title: 'Error', message: 'Server Error' });
   }
 };
 
 exports.getEditPage = async (req, res) => {
   try {
-    const page = req.params.id === 'new' ? null : await Page.findByPk(req.params.id);
+    const page = req.params.id === 'new' ? null : await Page.findById(req.params.id);
     res.render('admin/pages/edit', { title: page ? 'Edit Page' : 'Create Page', page, user: req.user });
   } catch (error) {
     console.error(error);
@@ -24,7 +24,7 @@ exports.getEditPage = async (req, res) => {
 exports.postCreatePage = async (req, res) => {
   try {
     const { title, content, metaTitle, metaDescription } = req.body;
-    await Page.create({ title, content, metaTitle, metaDescription });
+    await Page.create({ title, content, metaTitle, metaDescription, lastUpdatedBy: req.user._id });
     req.flash('success', 'Page created successfully');
     res.redirect('/admin/pages');
   } catch (error) {
@@ -37,10 +37,13 @@ exports.postCreatePage = async (req, res) => {
 exports.postUpdatePage = async (req, res) => {
   try {
     const { title, content, metaTitle, metaDescription } = req.body;
-    await Page.update(
-      { title, content, metaTitle, metaDescription },
-      { where: { id: req.params.id } }
-    );
+    await Page.findByIdAndUpdate(req.params.id, {
+      title,
+      content,
+      metaTitle,
+      metaDescription,
+      lastUpdatedBy: req.user._id
+    });
     req.flash('success', 'Page updated successfully');
     res.redirect('/admin/pages');
   } catch (error) {
@@ -52,7 +55,7 @@ exports.postUpdatePage = async (req, res) => {
 
 exports.postDeletePage = async (req, res) => {
   try {
-    await Page.destroy({ where: { id: req.params.id } });
+    await Page.findByIdAndDelete(req.params.id);
     req.flash('success', 'Page deleted successfully');
     res.redirect('/admin/pages');
   } catch (error) {
