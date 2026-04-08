@@ -1,28 +1,30 @@
-const { sequelize, User, Setting } = require('../models');
-const dotenv = require('dotenv');
-dotenv.config();
+require('dotenv').config();
+const { User, Setting, connectDB, mongoose } = require('../models');
 
 const seedAdmin = async () => {
   try {
-    await sequelize.authenticate();
-    await sequelize.sync();
+    await connectDB();
 
     // Admin user
-    const existingAdmin = await User.findOne({ where: { email: process.env.ADMIN_EMAIL } });
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@valormediation.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+    const existingAdmin = await User.findOne({ email: adminEmail });
     if (!existingAdmin) {
       await User.create({
         name: 'Admin',
-        email: process.env.ADMIN_EMAIL,
-        password: process.env.ADMIN_PASSWORD,
+        email: adminEmail,
+        password: adminPassword,
         role: 'admin',
+        status: 'active'
       });
-      console.log('Admin user created');
+      console.log('✅ Admin user created');
     } else {
-      console.log('Admin already exists');
+      console.log('ℹ️  Admin already exists');
     }
 
     // Default settings
-    const settings = await Setting.findOne({ where: { key: 'general' } });
+    const settings = await Setting.findOne({ key: 'general' });
     if (!settings) {
       await Setting.create({
         key: 'general',
@@ -33,14 +35,16 @@ const seedAdmin = async () => {
           address: '',
         },
       });
-      console.log('Default settings created');
+      console.log('✅ Default settings created');
     } else {
-      console.log('Settings already exist');
+      console.log('ℹ️  Settings already exist');
     }
 
+    console.log('✨ Seeding complete');
+    mongoose.connection.close();
     process.exit(0);
   } catch (error) {
-    console.error('Seeding error:', error);
+    console.error('❌ Seeding error:', error.message);
     process.exit(1);
   }
 };

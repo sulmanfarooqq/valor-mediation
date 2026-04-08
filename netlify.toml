@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  functions = "netlify/functions"
+  publish = "public"
+
+[functions]
+  included_files = ["views/**", "public/**", "models/**", "config/**", "services/**", "middleware/**", "utils/**"]
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api"
+  status = 200

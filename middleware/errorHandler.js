@@ -3,13 +3,15 @@ const logger = require('../utils/logger');
 const errorHandler = (err, req, res, next) => {
   logger.error(err.stack);
 
-  // Database errors
-  if (err.name === 'SequelizeValidationError') {
-    const messages = err.errors.map(e => e.message);
+  // Mongoose validation error
+  if (err.name === 'ValidationError') {
+    const messages = Object.values(err.errors).map(val => val.message);
     return res.status(400).json({ error: messages });
   }
-  if (err.name === 'SequelizeUniqueConstraintError') {
-    return res.status(400).json({ error: 'Duplicate entry' });
+
+  // MongoDB duplicate key error
+  if (err.code === 11000) {
+    return res.status(400).json({ error: 'Duplicate field value entered' });
   }
 
   // Default error
